@@ -1,12 +1,10 @@
-// frontend/src/App.js
-
 import React, { useState, useEffect } from 'react';
 
 function App() {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    fetch('/api')
+    fetch('http://localhost:8000/api') // Django sunucusunun adresini doğru olarak ayarlayın
       .then(response => response.json())
       .then(data => {
         console.log(data); // Kontrol amaçlı

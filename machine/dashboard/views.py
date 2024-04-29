@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 # Create your views here.
 
-
+from rest_framework.response import Response 
 
 def index(request):
 
@@ -12,7 +12,7 @@ def index(request):
 
 def dashboard(request):
     
-    return render(request,'dsahboard.html')
+    return render(request,'dashboard.html')
 
 
 
