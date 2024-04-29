@@ -16,11 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 
-from dashboard.views import index
+from dashboard.views import index,signup
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('dashboard',include('dashboard.urls')),
     path('',index,name='index'),
+    path('signup',signup,name='signup'),
     
 ]
