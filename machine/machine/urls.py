@@ -15,13 +15,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
-
-from dashboard.views import index,signup
-
+from django.conf import settings
+from dashboard.views import index,signup,hello
+from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('dashboard',include('dashboard.urls')),
     path('',index,name='index'),
     path('signup',signup,name='signup'),
+    path('api', hello, name='hello'),
+
     
 ]
+
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

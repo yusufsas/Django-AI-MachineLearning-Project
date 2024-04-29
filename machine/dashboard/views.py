@@ -1,5 +1,5 @@
 from django.shortcuts import render
-
+from django.http import JsonResponse
 # Create your views here.
 
 
@@ -28,6 +28,13 @@ def user_login(request):
 
     return render(request,'user_login.html')
 
+
+
+
+def hello(request):
+
+    
+    return JsonResponse({'message': 'Hello AŞKIM!'})
 
 
 
