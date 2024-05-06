@@ -16,14 +16,17 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from django.conf import settings
-from dashboard.views import index,signup,hello
+from dashboard.views import index,signup,hello,reader_login
 from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('dashboard',include('dashboard.urls')),
-    path('',index,name='index'),
-    path('signup',signup,name='signup'),
+    path('dashboard/',include('dashboard.urls')),
+    # path('',index,name='index'),
+    path('',signup,name='signup'),
+    path('reader_login/', reader_login, name='reader_login'),
+    # path('signup/',signup,name='signup'),
     path('api', hello, name='hello'),
+    # path('api/', include('users.urls')),
 
     
 ]
