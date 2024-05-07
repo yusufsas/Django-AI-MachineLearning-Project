@@ -9,13 +9,14 @@
 </head>
 <body>
   <nav class="navbar navbar-light bg-light">
+    
     <form class="form-inline my-2 my-lg-0 mx-auto" method="post" action="{% url 'index' %}">
         {% csrf_token %}
       <input class="form-control mr-sm-2" type="search" placeholder="Ara" aria-label="Ara" name="search">
       <button class="btn btn-outline-danger my-2 my-sm-0" type="submit">Ara</button>
     </form>
   </nav>
-
+  <div class="title p-4 container"><h1 class="display-4">{{user.first_name}} {{user.last_name}}</h1></div>
 
   <div class="container">
     <h1 class="display-3">{{search}}</h1>
@@ -90,7 +91,7 @@
   </div>
   
   
-  <h1>MERHABA ASLINUA</h1>
+ 
   <a href="{%url 'reader_login'%}">login</a>
   <a href="{%url 'signup'%}">signup</a>
   <a href="{%url 'admin:index'%}">admin</a>
