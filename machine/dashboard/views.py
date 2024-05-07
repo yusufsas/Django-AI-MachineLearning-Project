@@ -50,6 +50,9 @@ def reader_login(request):
 
 
 def index(request):
+    if request.method == 'POST':
+        search=request.POST.get('search')
+        return render(request,'index.html',{'search':search})
 
 
     return render(request,'index.html')

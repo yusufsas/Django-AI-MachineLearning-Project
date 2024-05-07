@@ -10,13 +10,15 @@
 <body>
   <nav class="navbar navbar-light bg-light">
     <form class="form-inline my-2 my-lg-0 mx-auto" method="post" action="{% url 'index' %}">
-      <input class="form-control mr-sm-2" type="search" placeholder="Ara" aria-label="Ara">
+        {% csrf_token %}
+      <input class="form-control mr-sm-2" type="search" placeholder="Ara" aria-label="Ara" name="search">
       <button class="btn btn-outline-danger my-2 my-sm-0" type="submit">Ara</button>
     </form>
   </nav>
 
 
   <div class="container">
+    <h1 class="display-3">{{search}}</h1>
     <div class="row">
       <div class="col-md-6 mb-4">
         <h1 class="mb-4 display-4 ">FASTEXT</h1>
