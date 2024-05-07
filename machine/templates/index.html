@@ -1,23 +1,102 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-
-    
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title></title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-    
+  <nav class="navbar navbar-light bg-light">
+    <form class="form-inline my-2 my-lg-0 mx-auto" method="post" action="{% url 'index' %}">
+      <input class="form-control mr-sm-2" type="search" placeholder="Ara" aria-label="Ara">
+      <button class="btn btn-outline-danger my-2 my-sm-0" type="submit">Ara</button>
+    </form>
+  </nav>
 
 
-    <h1>MERHABA ASLINUA</h1>
-    <a href="{%url 'reader_login'%}">login</a>
-    <a href="{%url 'signup'%}">signup</a>
-    <a href="{%url 'admin:index'%}">admin</a>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 mb-4">
+        <h1 class="mb-4 display-4 ">FASTEXT</h1>
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title display-6">Başlık 1</h5>
+            <p class="card-text">Bu kartın içeriği burada olacak.</p>
+          </div>
+        </div>
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title display-6">Başlık 2</h5>
+            <p class="card-text">Bu kartın içeriği burada olacak.</p>
+          </div>
+        </div>
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title display-6">Başlık 3</h5>
+            <p class="card-text">Bu kartın içeriği burada olacak.</p>
+          </div>
+        </div>
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title display-6">Başlık 4</h5>
+            <p class="card-text">Bu kartın içeriği burada olacak.</p>
+          </div>
+        </div>
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title display-6">Başlık 5</h5>
+            <p class="card-text">Bu kartın içeriği burada olacak.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 mb-4">
+        <h1 class="mb-4 display-4">SCIBERT</h1>
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title display-6">Başlık 6</h5>
+            <p class="card-text">Bu kartın içeriği burada olacak.</p>
+          </div>
+        </div>
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title display-6">Başlık 7</h5>
+            <p class="card-text">Bu kartın içeriği burada olacak.</p>
+          </div>
+        </div>
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title display-6">Başlık 8</h5>
+            <p class="card-text">Bu kartın içeriği burada olacak.</p>
+          </div>
+        </div>
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title display-6">Başlık 9</h5>
+            <p class="card-text">Bu kartın içeriği burada olacak.</p>
+          </div>
+        </div>
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title display-6">Başlık 10</h5>
+            <p class="card-text">Bu kartın içeriği burada olacak.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+  <h1>MERHABA ASLINUA</h1>
+  <a href="{%url 'reader_login'%}">login</a>
+  <a href="{%url 'signup'%}">signup</a>
+  <a href="{%url 'admin:index'%}">admin</a>
 
 
 
-
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
