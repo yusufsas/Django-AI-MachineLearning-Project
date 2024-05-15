@@ -16,6 +16,61 @@
       <button class="btn btn-outline-danger my-2 my-sm-0" type="submit">Ara</button>
     </form>
   </nav>
+<div class="container">
+
+  {%for article in searches %}
+        
+  <div class="container m-4">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-body">
+            <h1 class="display-6">{{article.title}}</h1>
+            <a href="{% url 'detail' article.id %}" class="btn btn-danger text-white">Detail</a>
+            <!-- <p class="card-text">Burası kart içeriği olacak.</p> -->
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    {%endfor%}
+</div>
+
+
+<nav>
+  <form class="form-inline justify-content-center" method="post" action="{% url 'index' %}">
+    {% csrf_token %}
+    <div class="form-group mx-sm-3 mb-2">
+      <input class="form-control mr-sm-2" type="search" placeholder="İlgi alanı Seç" aria-label="Ara" name="interestsearch">
+    </div>
+    <button class="btn btn-outline-info mb-2" type="submit">Listele</button>
+  </form>
+</nav>
+  
+
+
+
+<div class="container mt-5 ">
+  <form method="post"  action="{% url 'index' %}">
+    {% csrf_token %}
+    <div class="form-group">
+      {%for interest in interests%}
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="{{interest.id}}" name="interests[]" value="{{interest.id}}">
+        <label class="form-check-label" for="{{interest.id}}">{{interest.name}}</label>
+      </div>
+      {%endfor%}
+     
+    </div>
+    <button type="submit" class="btn btn-warning">İlgi Alanını Kaydet</button>
+  </form>
+</div>
+
+
+
+
   <div class="title p-4 container"><h1 class="display-4">Hoşgeldin {{user.first_name}} {{user.last_name}}!</h1></div>
 
   <div class="container">
@@ -23,36 +78,26 @@
     <div class="row">
       <div class="col-md-6 mb-4">
         <h1 class="mb-4 display-4 ">FASTEXT</h1>
-        <div class="card mb-4">
-          <div class="card-body">
-            <h5 class="card-title display-6">Başlık 1</h5>
-            <p class="card-text">Bu kartın içeriği burada olacak.</p>
-          </div>
+        
+        {%for article in recommended_articles %}
+        
+        <div class="container m-4">
+          
+           
+              <div class="card">
+                <div class="card-body">
+                  <h1 class="display-6">{{article.title}}</h1>
+                  <a href="{% url 'detail' article.id %}" class="btn btn-danger text-white">Detail</a>
+                  <!-- <p class="card-text">Burası kart içeriği olacak.</p> -->
+                  
+                </div>
+              </div>
+          
+          
         </div>
-        <div class="card mb-4">
-          <div class="card-body">
-            <h5 class="card-title display-6">Başlık 2</h5>
-            <p class="card-text">Bu kartın içeriği burada olacak.</p>
-          </div>
-        </div>
-        <div class="card mb-4">
-          <div class="card-body">
-            <h5 class="card-title display-6">Başlık 3</h5>
-            <p class="card-text">Bu kartın içeriği burada olacak.</p>
-          </div>
-        </div>
-        <div class="card mb-4">
-          <div class="card-body">
-            <h5 class="card-title display-6">Başlık 4</h5>
-            <p class="card-text">Bu kartın içeriği burada olacak.</p>
-          </div>
-        </div>
-        <div class="card mb-4">
-          <div class="card-body">
-            <h5 class="card-title display-6">Başlık 5</h5>
-            <p class="card-text">Bu kartın içeriği burada olacak.</p>
-          </div>
-        </div>
+      
+        {%endfor%}
+        
       </div>
       <div class="col-md-6 mb-4">
         <h1 class="mb-4 display-4">SCIBERT</h1>

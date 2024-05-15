@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from django.conf import settings
-from dashboard.views import index,signup,hello,reader_login,create_vector,show_vectors
+from dashboard.views import index,signup,reader_login,create_vector,show_vectors
 from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,7 +27,7 @@ urlpatterns = [
     path('create_vector/', create_vector, name='create_vectors'),
     path('show_vector/', show_vectors, name='show_vector'),
     # path('signup/',signup,name='signup'),
-    path('api', hello, name='hello'),
+  
     # path('api/', include('users.urls')),
 
     
