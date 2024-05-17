@@ -101,36 +101,26 @@
       </div>
       <div class="col-md-6 mb-4">
         <h1 class="mb-4 display-4">SCIBERT</h1>
-        <div class="card mb-4">
-          <div class="card-body">
-            <h5 class="card-title display-6">Başlık 6</h5>
-            <p class="card-text">Bu kartın içeriği burada olacak.</p>
-          </div>
+        {%for article in recommended_sc_articles %}
+        
+        <div class="container m-4">
+          
+           
+              <div class="card">
+                <div class="card-body">
+                  <h1 class="display-6">{{article.title}}</h1>
+                  <a href="{% url 'detail' article.id %}" class="btn btn-success text-white">Detail</a>
+                  <!-- <p class="card-text">Burası kart içeriği olacak.</p> -->
+                  
+                </div>
+              </div>
+          
+          
         </div>
-        <div class="card mb-4">
-          <div class="card-body">
-            <h5 class="card-title display-6">Başlık 7</h5>
-            <p class="card-text">Bu kartın içeriği burada olacak.</p>
-          </div>
-        </div>
-        <div class="card mb-4">
-          <div class="card-body">
-            <h5 class="card-title display-6">Başlık 8</h5>
-            <p class="card-text">Bu kartın içeriği burada olacak.</p>
-          </div>
-        </div>
-        <div class="card mb-4">
-          <div class="card-body">
-            <h5 class="card-title display-6">Başlık 9</h5>
-            <p class="card-text">Bu kartın içeriği burada olacak.</p>
-          </div>
-        </div>
-        <div class="card mb-4">
-          <div class="card-body">
-            <h5 class="card-title display-6">Başlık 10</h5>
-            <p class="card-text">Bu kartın içeriği burada olacak.</p>
-          </div>
-        </div>
+      
+        {%endfor%}
+        
+         
       </div>
     </div>
   </div>

@@ -24,7 +24,8 @@ class FastTextVector(models.Model):
     
     created_at = models.DateTimeField(auto_now_add=True)
 
-    vector = models.JSONField()  # JSON formatında saklanacak
+    vector = models.JSONField()
+    sc_vector = models.JSONField()   # JSON formatında saklanacak
 
     def save_numpy_data(self, data):
         # NumPy dizisini JSON formatına dönüştürerek kaydedin

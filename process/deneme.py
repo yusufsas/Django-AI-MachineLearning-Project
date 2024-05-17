@@ -1,35 +1,30 @@
-from gensim.models import FastText
-import numpy as np
+from transformers import AutoTokenizer, AutoModel
+import torch
 
-# 100 tane örnek cümle
-sentences = [
-    "Bu bir örnek cümledir.",
-    "Örnek bir cümle oluşturduk.",
-    "Bu bir örnek cümledir.",
-    "Örnek bir cümle oluşturduk.",
-    "FastText vektör temsilleri için örnek kod yazıyoruz.",
-    "Metin işleme yöntemleri hakkında örnekler inceliyoruz.",
-    "Python programlama dili kullanarak örnekler geliştiriyoruz.",
-    # Diğer cümleler buraya eklenebilir...
-]
+# Scibert modelini yükle
+scibert_model_name = "allenai/scibert_scivocab_uncased"
+tokenizer = AutoTokenizer.from_pretrained(scibert_model_name)
+scibert_model = AutoModel.from_pretrained(scibert_model_name)
 
-# FastText modelini eğitme
-model = FastText([sentence.split() for sentence in sentences], min_count=1, workers=4)
+# Metni tokenize et
+text = "Bir metni buraya girinkcbwsjkncwesnkc."
+tokens = tokenizer.tokenize(text)
 
-# Her cümle için vektör temsillerini oluşturma
-sentence_vectors = []
-for sentence in sentences:
-    word_vectors = [model.wv.get_vector(word) for word in sentence.split() if word in model.wv.key_to_index]
-    if word_vectors:
-        sentence_vector = np.mean(word_vectors, axis=0)
-        sentence_vectors.append(sentence_vector)
-    else:
-        # Eğer cümlede modelde olmayan bir kelime varsa, vektörü None olarak ayarlayabilirsiniz.
-        # sentence_vectors.append(None)
-        # veya bu cümleyi tamamen atlayabilirsiniz.
-        pass
+# Tokenleri tensorlara dönüştür
+input_ids = tokenizer.encode(text, return_tensors="pt")
+print(input_ids)
+# Modelden geçir
+with torch.no_grad():
+    outputs = scibert_model(input_ids)
+    print(outputs)
 
-# Her cümle için oluşturulan vektörleri yazdırma
-for i, vector in enumerate(sentence_vectors):
-    print(f"Cümle {i+1} vektör temsili:")
-    print(vector)
+# Tuple'dan çıktıları al
+hidden_states = outputs[0]
+
+# Tokenlerin son katman çıktılarını al
+last_hidden_states = hidden_states[:, 0, :]
+
+# Vektörü numpy dizisine çevir
+text_vector = last_hidden_states.numpy()
+text_vector=text_vector.tolist()
+# print(text_vector[0])

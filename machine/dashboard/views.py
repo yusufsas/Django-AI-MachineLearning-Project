@@ -4,12 +4,9 @@ from django.http import JsonResponse
 import json
 from sklearn.preprocessing import MinMaxScaler
 from .forms import SignUpForm,ReaderSignUpForm
-# from rest_framework.response import Response 
+
 from django.contrib.auth.forms import AuthenticationForm
-# from rest_framework import status
-# from rest_framework.decorators import api_view
-# from rest_framework.response import Response
-# from .serializers import UserSerializer
+
 from django.contrib.auth import login, authenticate
 from django.shortcuts import render
 from .models import FastTextVector,Reader,Interest
@@ -22,6 +19,10 @@ from nltk.tokenize import word_tokenize
 from nltk.stem import PorterStemmer
 import string
 from sklearn.metrics.pairwise import cosine_similarity
+from transformers import AutoTokenizer, AutoModel
+import torch
+
+
 # NLTK'yi başlat
 nltk.download('punkt')
 nltk.download('stopwords')
@@ -70,7 +71,7 @@ def preprocess_text(text):
 
 
 
-def create_vectors_from_dataset(dataset_folder, ft_model, batch_size=100):
+def create_vectors_from_dataset(dataset_folder, ft_model,scibert_model,tokenizer, batch_size=100):
     files = os.listdir(dataset_folder)
     total_files = len(files)
     
@@ -95,11 +96,40 @@ def create_vectors_from_dataset(dataset_folder, ft_model, batch_size=100):
             processed_text = preprocess_text(text)
             vector = ft_model.get_sentence_vector(processed_text)
             vector=vector.tolist()
+            
+            scibert_model_name = "allenai/scibert_scivocab_uncased"
+            # tokenizer = AutoTokenizer.from_pretrained(scibert_model_name)
+            # scibert_model = AutoModel.from_pretrained(scibert_model_name)
+            processed_sc_text=preprocess_text(title)
+            tokens = tokenizer.tokenize(processed_sc_text)
+
+# Tokenleri tensorlara dönüştür
+            input_ids = tokenizer.encode(processed_sc_text, return_tensors="pt")
+
+            
+            with torch.no_grad():
+
+                outputs = scibert_model(input_ids)
+               
+               
+# Tuple'dan çıktıları al
+            hidden_states = outputs[0]
+
+# Tokenlerin son katman çıktılarını al
+            last_hidden_states = hidden_states[:, 0, :]
+
+            text_vector = last_hidden_states[:, :300]
+
+# Vektörü numpy dizisine çevir
+            text_vector = text_vector.numpy()
+            text_vector=text_vector.tolist()
+            text_vector=text_vector[0]
+            
             id_number = file_name.split('.')[0]
             # instance=FastTextVector(id_number=id_number, text=processed_text)
             # instance.save_numpy_data(vector)
             # instance.save()
-            vectors_to_create.append(FastTextVector(id_number=id_number,title=title, text=processed_text,vector=vector))
+            vectors_to_create.append(FastTextVector(id_number=id_number,title=title, text=processed_text,vector=vector,sc_vector=text_vector))
             # instance.save_numpy_data(vector)
             # instance.save()
         # Part part vektörleri kaydet
@@ -111,6 +141,9 @@ dataset_folder = "C:/Users/yusuf/Desktop/github/yazlab2-3/Krapivin2009/docsutf8"
 # FastText modelini yükle
 ft_model = fasttext.load_model("C:/Users/yusuf/Desktop/github/yazlab2-3/cc.en.300.bin")
 
+
+tokenizer = AutoTokenizer.from_pretrained("C:/Users/yusuf/Desktop/github/yazlab2-3")
+scibert_model = AutoModel.from_pretrained("C:/Users/yusuf/Desktop/github/yazlab2-3")
 # Vektörleri oluştur ve veritabanına kaydet (part part)
 
 
@@ -166,7 +199,7 @@ def create_vector(request):
         # Ön işleme adımlarını uygula
         dosya_oku_ve_kaydet(dizin_yolu)
 
-        create_vectors_from_dataset(dataset_folder, ft_model, batch_size=100)
+        create_vectors_from_dataset(dataset_folder, ft_model,scibert_model,tokenizer, batch_size=100)
 
         # text = preprocess_text(text)
 
@@ -291,13 +324,16 @@ def index(request):
         
                 # Tüm makalelerin vektörlerini al
         all_article_vectors = FastTextVector.objects.values_list('vector', flat=True)
+        all_article_sc_vectors = FastTextVector.objects.values_list('sc_vector', flat=True)
         
             # Her makalenin vektörünü uygun şekilde işleyin (str to array)
         all_article_vectors = [np.array(vector) for vector in all_article_vectors]
+        all_article_sc_vectors = [np.array(vector) for vector in all_article_sc_vectors]
 
             # Her makalenin vektörünü 2D dizilere dönüştürün
         user_vector = user_vector.reshape(1, -1)
         all_article_vectors = [vector.reshape(1, -1) for vector in all_article_vectors]
+        all_article_sc_vectors = [vector.reshape(1, -1) for vector in all_article_sc_vectors]
                 
             # print(user_vector)
             # print("--------------------------------------------------")
@@ -305,14 +341,16 @@ def index(request):
 
             # Her makalenin vektörü ile kullanıcının vektörü arasındaki kosinüs benzerliğini hesaplayın
         similarities = [cosine_similarity(user_vector, vector)[0][0] for vector in all_article_vectors]
-        
+        sc_similarities = [cosine_similarity(user_vector, vector)[0][0] for vector in all_article_sc_vectors]
             # En yüksek benzerlik skorlarına sahip olan makalelerin indislerini al
         top_similarities_indices = np.argsort(similarities)[-5:][::-1]
-        print(top_similarities_indices)
+        top_similarities_sc_indices = np.argsort(sc_similarities)[-5:][::-1]
+        # print(top_similarities_indices)
             # Öneri olarak en yüksek benzerlik skorlarına sahip olan makaleleri döndürün
         recommended_articles = FastTextVector.objects.filter(id__in=top_similarities_indices)
+        recommended_sc_articles = FastTextVector.objects.filter(id__in=top_similarities_sc_indices)
         # print(recommended_articles)
-        return render(request,'index.html',{'reader':reader,'recommended_articles':recommended_articles}) 
+        return render(request,'index.html',{'reader':reader,'recommended_articles':recommended_articles,'recommended_sc_articles':recommended_sc_articles}) 
 
 
 
