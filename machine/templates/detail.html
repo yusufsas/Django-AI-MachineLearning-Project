@@ -1,25 +1,35 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title></title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Makale Gösterimi</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-  <h1>{{fasttextvector.id}}</h1>
-  <p>{{text}}</p>
-  
- 
-  <a href="{%url 'reader_login'%}">login</a>
-  <a href="{%url 'signup'%}">signup</a>
-  <a href="{%url 'admin:index'%}">admin</a>
 
+<div class="container mt-5">
+    <div class="d-flex justify-content-start mb-4">
+        <a href="{% url 'index' %}" class="btn btn-warning">GO BACK</a>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h1>{{ fasttextvector.id }}</h1>
+        </div>
+        <div class="card-body">
+            <h2 class="card-title">{{ title }}</h2>
+            <h5 class="card-subtitle mb-2 text-muted">Abstract</h5>
+            <p class="card-text">{{ abstract }}</p>
+            <h5 class="card-subtitle mb-2 text-muted">Body</h5>
+            <p class="card-text">{{ body }}</p>
+        </div>
+    </div>
+</div>
 
-
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

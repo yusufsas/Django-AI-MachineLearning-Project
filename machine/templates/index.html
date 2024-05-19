@@ -97,6 +97,12 @@
         </div>
       
         {%endfor%}
+        <div class="display-2">Precision {{precision}}</div>
+        <div class="display-2"> Recall {{recall}}</div>
+            <!-- 'precision': precision,
+            'recall': recall,
+            'sc_precision': sc_precision,
+            'sc_recall': sc_recall -->
         
       </div>
       <div class="col-md-6 mb-4">
@@ -119,7 +125,8 @@
         </div>
       
         {%endfor%}
-        
+        <div class="display-2">Precision {{sc_precision}}</div>
+        <div class="display-2"> Recall {{sc_recall}}</div>
          
       </div>
     </div>

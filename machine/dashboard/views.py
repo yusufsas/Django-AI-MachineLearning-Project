@@ -4,7 +4,7 @@ from django.http import JsonResponse
 import json
 from sklearn.preprocessing import MinMaxScaler
 from .forms import SignUpForm,ReaderSignUpForm
-
+from sklearn.metrics import precision_score, recall_score
 from django.contrib.auth.forms import AuthenticationForm
 
 from django.contrib.auth import login, authenticate
@@ -307,51 +307,62 @@ def index(request):
     # sorted_similarities = sorted(similarities.items(), key=lambda x: x[1], reverse=True)[:5]
     if reader.interests.exists():
         user_article_vectors = []
-        for interest in reader.interests.all():  
-                
+        for interest in reader.interests.all():
             processed_text = preprocess_text(interest.name)
             vector = ft_model.get_sentence_vector(processed_text)
-            vector=vector.tolist()
+            vector = vector.tolist()
             user_article_vectors.append(vector)
         
         user_articles = reader.article_list.all()
+        user_article_ids = [article.id for article in user_articles]
         for article in user_articles:
             user_article_vectors.append(article.vector)
-                
-                # Kullanıcının vektörlerinin ortalamasını hesapla
-       
+        
+        # Calculate the average user vector
         user_vector = np.mean(user_article_vectors, axis=0)
         
-                # Tüm makalelerin vektörlerini al
-        all_article_vectors = FastTextVector.objects.values_list('vector', flat=True)
-        all_article_sc_vectors = FastTextVector.objects.values_list('sc_vector', flat=True)
+        # Get all article vectors
+        all_articles = FastTextVector.objects.all()
+        all_article_vectors = [np.array(vector.vector) for vector in all_articles]
+        all_article_sc_vectors = [np.array(vector.sc_vector) for vector in all_articles]
         
-            # Her makalenin vektörünü uygun şekilde işleyin (str to array)
-        all_article_vectors = [np.array(vector) for vector in all_article_vectors]
-        all_article_sc_vectors = [np.array(vector) for vector in all_article_sc_vectors]
-
-            # Her makalenin vektörünü 2D dizilere dönüştürün
         user_vector = user_vector.reshape(1, -1)
         all_article_vectors = [vector.reshape(1, -1) for vector in all_article_vectors]
         all_article_sc_vectors = [vector.reshape(1, -1) for vector in all_article_sc_vectors]
-                
-            # print(user_vector)
-            # print("--------------------------------------------------")
-            # print(all_article_vectors)
-
-            # Her makalenin vektörü ile kullanıcının vektörü arasındaki kosinüs benzerliğini hesaplayın
+        
         similarities = [cosine_similarity(user_vector, vector)[0][0] for vector in all_article_vectors]
         sc_similarities = [cosine_similarity(user_vector, vector)[0][0] for vector in all_article_sc_vectors]
-            # En yüksek benzerlik skorlarına sahip olan makalelerin indislerini al
+        
         top_similarities_indices = np.argsort(similarities)[-5:][::-1]
         top_similarities_sc_indices = np.argsort(sc_similarities)[-5:][::-1]
-        # print(top_similarities_indices)
-            # Öneri olarak en yüksek benzerlik skorlarına sahip olan makaleleri döndürün
+        
         recommended_articles = FastTextVector.objects.filter(id__in=top_similarities_indices)
         recommended_sc_articles = FastTextVector.objects.filter(id__in=top_similarities_sc_indices)
-        # print(recommended_articles)
-        return render(request,'index.html',{'reader':reader,'recommended_articles':recommended_articles,'recommended_sc_articles':recommended_sc_articles}) 
-
+        
+        # Performance evaluation
+        recommended_article_ids = [article.id for article in recommended_articles]
+        recommended_sc_article_ids = [article.id for article in recommended_sc_articles]
+        
+        y_true = [1 if article.id in user_article_ids else 0 for article in all_articles]
+        y_pred = [1 if article.id in recommended_article_ids else 0 for article in all_articles]
+        y_pred_sc = [1 if article.id in recommended_sc_article_ids else 0 for article in all_articles]
+        
+        precision = precision_score(y_true, y_pred)
+        recall = recall_score(y_true, y_pred)
+        sc_precision = precision_score(y_true, y_pred_sc)
+        sc_recall = recall_score(y_true, y_pred_sc)
+        
+        context = {
+            'reader': reader,
+            'recommended_articles': recommended_articles,
+            'recommended_sc_articles': recommended_sc_articles,
+            'precision': precision,
+            'recall': recall,
+            'sc_precision': sc_precision,
+            'sc_recall': sc_recall
+        }
+        
+        return render(request, 'index.html', context)
 
 
    
@@ -383,12 +394,28 @@ def detail(request,id):
     # Dosyayı açın ve içeriğini okuyun
         with open(file_path, 'r', encoding='utf-8') as file:
             text = file.read()
+
+    # Title, abstract ve body bölümlerini ayırmak için işaretleyicileri kullanın
+        title_start = text.find('--T')
+        abstract_start = text.find('--A')
+        body_start = text.find('--B')
+
+        if title_start != -1 and abstract_start != -1 and body_start != -1:
+            title = text[title_start + 3:abstract_start].strip()
+            abstract = text[abstract_start + 3:body_start].strip()
+            body = text[body_start + 3:].strip()
+            return render(request,'detail.html',{'fasttextvector':fasttextvector,"title":title,'abstract':abstract,'body':body})
+        # print("Title:\n", title)
+        # print("\nAbstract:\n", abstract)
+        # print("\nBody:\n", body)
+        else:
+            print("Metin içindeki işaretleyiciler eksik veya hatalı.")
     
     else:
         print(f"'{target}' adlı dosya bulunamadı.")
 
 
-    return render(request,'detail.html',{'fasttextvector':fasttextvector,'text':text})
+    return render(request,'detail.html',{'fasttextvector':fasttextvector})
 
 
 
