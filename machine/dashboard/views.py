@@ -21,7 +21,7 @@ import string
 from sklearn.metrics.pairwise import cosine_similarity
 from transformers import AutoTokenizer, AutoModel
 import torch
-
+from django.contrib.auth.decorators import login_required
 
 # NLTK'yi başlat
 nltk.download('punkt')
@@ -91,7 +91,7 @@ def create_vectors_from_dataset(dataset_folder, ft_model,scibert_model,tokenizer
             end_index = text.find('--A', start_index)  # Başlığın bitiş indeksi
     
 
-            title = text[start_index+len('--T'):end_index].strip() 
+            text2 = text[start_index+len('--T'):end_index].strip() 
 
             processed_text = preprocess_text(text)
             vector = ft_model.get_sentence_vector(processed_text)
@@ -100,7 +100,7 @@ def create_vectors_from_dataset(dataset_folder, ft_model,scibert_model,tokenizer
             scibert_model_name = "allenai/scibert_scivocab_uncased"
             # tokenizer = AutoTokenizer.from_pretrained(scibert_model_name)
             # scibert_model = AutoModel.from_pretrained(scibert_model_name)
-            processed_sc_text=preprocess_text(title)
+            processed_sc_text=preprocess_text(text2)
             tokens = tokenizer.tokenize(processed_sc_text)
 
 # Tokenleri tensorlara dönüştür
@@ -126,13 +126,10 @@ def create_vectors_from_dataset(dataset_folder, ft_model,scibert_model,tokenizer
             text_vector=text_vector[0]
             
             id_number = file_name.split('.')[0]
-            # instance=FastTextVector(id_number=id_number, text=processed_text)
-            # instance.save_numpy_data(vector)
-            # instance.save()
+            
+            title=text2
             vectors_to_create.append(FastTextVector(id_number=id_number,title=title, text=processed_text,vector=vector,sc_vector=text_vector))
-            # instance.save_numpy_data(vector)
-            # instance.save()
-        # Part part vektörleri kaydet
+            
         FastTextVector.objects.bulk_create(vectors_to_create)
 
 # Krapivin datasetinin bulunduğu klasör yolu
@@ -372,9 +369,27 @@ def index(request):
 # def dashboard(request):
     
 #     return render(request,'dashboard.html')
+@login_required
+def like_article(request, id):
+    fasttextvector = FastTextVector.objects.get(id=id)
+    reader = Reader.objects.get(user=request.user)
+    
+    # Eğer fasttextvector zaten article_list içinde yoksa, ekle
+    if not reader.article_list.filter(id=id).exists():
+        reader.article_list.add(fasttextvector)
+    
+    return redirect('index')
 
-
-
+@login_required
+def dislike_article(request, id):
+    fasttextvector = FastTextVector.objects.get(id=id)
+    reader = Reader.objects.get(user=request.user)
+    
+    # Eğer fasttextvector article_list içinde varsa, çıkar
+    if reader.article_list.filter(id=id).exists():
+        reader.article_list.remove(fasttextvector)
+    
+    return redirect('index')
 
 
 def detail(request,id):

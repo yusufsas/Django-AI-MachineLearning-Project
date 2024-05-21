@@ -98,6 +98,17 @@ DATABASES = {
         }
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'djongo',
+#         'NAME': 'aiproject',                    # MongoDB veritabanı adı
+#         'ENFORCE_SCHEMA': False,                 # Şema zorlaması (opsiyonel)
+#         'CLIENT': {
+#             'host': 'mongodb://localhost:27017/',  # MongoDB sunucu adresi ve bağlantı noktası
+#             # Diğer MongoDB bağlantı seçeneklerini buraya ekleyin
+#         }
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
